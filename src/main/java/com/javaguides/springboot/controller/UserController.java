@@ -22,6 +22,7 @@ import com.javaguides.springboot.exception.ErrorDetails;
 import com.javaguides.springboot.exception.ResourceNotFounceException;
 import com.javaguides.springboot.service.UserService;
 
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 
 /*
@@ -36,9 +37,10 @@ public class UserController {
 
   private UserService userService;
 
+  //code refactor with @Valid annotation
   // build create User REST API
   @PostMapping
-  public ResponseEntity<UserDto> createUser(@RequestBody UserDto user) {
+  public ResponseEntity<UserDto> createUser(@Valid @RequestBody UserDto user) {
 
     UserDto savedUser = userService.createUser(user);
     return new ResponseEntity<>(savedUser, HttpStatus.CREATED);
@@ -63,7 +65,7 @@ public class UserController {
   // http://localhost:8080/api/users/1
   @PutMapping("{id}")
   public ResponseEntity<UserDto> updateUser(@PathVariable("id") Long userId,
-      @RequestBody UserDto user) {
+       @RequestBody @Valid UserDto user) {
     // set user id
     user.setId(userId);
     UserDto updatedUser = userService.updateUser(user);
