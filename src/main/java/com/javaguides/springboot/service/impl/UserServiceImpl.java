@@ -10,6 +10,8 @@ import org.springframework.stereotype.Service;
 
 import com.javaguides.springboot.dto.UserDto;
 import com.javaguides.springboot.entity.User;
+import com.javaguides.springboot.exception.EmailAlreadyExistException;
+import com.javaguides.springboot.exception.ResourceNotFounceException;
 import com.javaguides.springboot.mapper.AutoUserMapper;
 import com.javaguides.springboot.mapper.UserMapper;
 import com.javaguides.springboot.repository.UserRepository;
@@ -57,6 +59,15 @@ public class UserServiceImpl implements UserService {
     // pareamter 2 takes the name of the entity class you are converting to
     // User user = modelMapper.map(userDto, User.class);
 
+	 //get user by email
+	  Optional<User> optionalUser = userRepository.findByEmail(userDto.getEmail());
+	  
+	  //check if email already exist
+	  if(optionalUser.isPresent()) {
+		  //throws exception
+		  throw new EmailAlreadyExistException("Email Already Exist for User");
+	  }
+	  
     // code refactored using mapstruct to convert DTO object(UserDto) to JPA Entity
     // object(User)
     User user = AutoUserMapper.MAPPER.mapToUser(userDto);
@@ -75,22 +86,35 @@ public class UserServiceImpl implements UserService {
     return savedUserDto;
   }
 
+//  @Override
+//  public UserDto getUserById(Long userId) {
+//    // NB here User object is used in the optional parameter because the return jpa
+//    // entity object returned is
+//    // of type User. You have to get the value first before it will be converted
+//    // into a dto
+//    Optional<User> optionalUser = userRepository.findById(userId);
+//    User user = optionalUser.get(); // store the return value from the repository
+//
+//    // return UserMapper.mapToUserDto(user);// convert the return Jpa entity object
+//    // which is of type User into UserDto
+//
+//    // return modelMapper.map(user, UserDto.class);
+//
+//    // code refactored using mapstruct to convert JPA Entity object(User ) to DTO
+//    // object(UserDto)
+//    return AutoUserMapper.MAPPER.mapToUserDto(user);
+//  }
+  
+  
+  //code modified with custom exception
   @Override
   public UserDto getUserById(Long userId) {
-    // NB here User object is used in the optional parameter because the return jpa
-    // entity object returned is
-    // of type User. You have to get the value first before it will be converted
-    // into a dto
-    Optional<User> optionalUser = userRepository.findById(userId);
-    User user = optionalUser.get(); // store the return value from the repository
-
-    // return UserMapper.mapToUserDto(user);// convert the return Jpa entity object
-    // which is of type User into UserDto
-
-    // return modelMapper.map(user, UserDto.class);
-
-    // code refactored using mapstruct to convert JPA Entity object(User ) to DTO
-    // object(UserDto)
+    //Optional<User> optionalUser changed to User user
+    User user = userRepository.findById(userId).orElseThrow(
+    		//throws exception if user id is not found
+    		() -> new ResourceNotFounceException("User", "id", userId) 
+    		);
+   // User user = optionalUser.get(); // store the return value from the repository
     return AutoUserMapper.MAPPER.mapToUserDto(user);
   }
 
@@ -120,10 +144,32 @@ public class UserServiceImpl implements UserService {
         .collect(Collectors.toList());
   }
 
+//  @Override
+//  public UserDto updateUser(UserDto user) {
+//    // get the existing user by id
+//    User existingUser = userRepository.findById(user.getId()).get();
+//    existingUser.setFirstName(user.getFirstName());
+//    existingUser.setLastName(user.getLastName());
+//    existingUser.setEmail(user.getEmail());
+//    User updatedUser = userRepository.save(existingUser);
+//    // return UserMapper.mapToUserDto(updatedUser);
+//
+//    // return modelMapper.map(updatedUser, UserDto.class);
+//
+//    // code refactored using mapstruct to convert JPA Entity object(User ) to DTO
+//    // object(UserDto)
+//    return AutoUserMapper.MAPPER.mapToUserDto(updatedUser);
+//  }
+  
+  
+  //code modified with resource not found exception 
   @Override
   public UserDto updateUser(UserDto user) {
     // get the existing user by id
-    User existingUser = userRepository.findById(user.getId()).get();
+    User existingUser = userRepository.findById(user.getId()).orElseThrow(
+    		//throws exception if user id is not found
+    		() -> new ResourceNotFounceException("User", "id", user.getId()) 
+    		);
     existingUser.setFirstName(user.getFirstName());
     existingUser.setLastName(user.getLastName());
     existingUser.setEmail(user.getEmail());
@@ -139,6 +185,10 @@ public class UserServiceImpl implements UserService {
 
   @Override
   public void deleteUser(Long userId) {
+	  User existingUser = userRepository.findById(userId).orElseThrow(
+	    		//throws exception if user id is not found
+	    		() -> new ResourceNotFounceException("User", "id", userId) 
+	    		);
     userRepository.deleteById(userId);
   }
 
