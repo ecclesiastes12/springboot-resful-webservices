@@ -22,14 +22,29 @@ import com.javaguides.springboot.exception.ErrorDetails;
 import com.javaguides.springboot.exception.ResourceNotFounceException;
 import com.javaguides.springboot.service.UserService;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 
 /*
  * CODE REFACTORED TO USE DTO SEND INFORMATION BETWEEN THE CLIENT AND THE SERVER.
  *  CHECK UserController1.java for the previous code
+ *  
+ *  
+ *  @Tag provides description about this controller 
+ *  @Operation - The annotation may be used to define a resource method as an OpenAPI Operation, 
+ *  and/or to define additionalproperties for the Operation
+ *  
+ *  @ApiResponse - provides information about api response
  */
 
+
+@Tag(
+	name = "CRUD REST APIs for User Resource",
+	description = "CRUD REST APIS - Create User, Update User, Get User, Get All Users, Delete User"
+)
 @RestController
 @AllArgsConstructor
 @RequestMapping("api/users")
@@ -39,6 +54,14 @@ public class UserController {
 
   //code refactor with @Valid annotation
   // build create User REST API
+  @Operation(
+		  summary = "Create User REST API",
+		  description = "Create User REST API is used to save user in a database "
+  )
+  @ApiResponse(
+	   responseCode = "201",
+	   description = "HTTP Status 201 CREATED"
+  )
   @PostMapping
   public ResponseEntity<UserDto> createUser(@Valid @RequestBody UserDto user) {
 
@@ -48,6 +71,14 @@ public class UserController {
 
   // build get User by id REST API
   // http://localhost:8080/api/users/1
+  @Operation(
+		  summary = "Get User By ID REST API",
+		  description = "Get User By ID  REST API is used get a single user from the database "
+  )
+  @ApiResponse(
+	   responseCode = "200",
+	   description = "HTTP Status 200 SUCCESS"
+  )
   @GetMapping("{id}")
   public ResponseEntity<UserDto> getUserById(@PathVariable("id") Long userId) {
     UserDto user = userService.getUserById(userId);
@@ -55,6 +86,14 @@ public class UserController {
   }
 
   // build get all Users REST API
+  @Operation(
+		  summary = "Get All Users REST API",
+		  description = "Get All Users REST API is used get all users from the database "
+  )
+  @ApiResponse(
+	   responseCode = "200",
+	   description = "HTTP Status 200 SUCCESS"
+  )
   @GetMapping
   public ResponseEntity<List<UserDto>> getAllUsers() {
     List<UserDto> users = userService.getAllUsers();
@@ -63,6 +102,14 @@ public class UserController {
 
   // build Update Users REST API
   // http://localhost:8080/api/users/1
+  @Operation(
+		  summary = "Update User By ID REST API",
+		  description = "Update User By ID  REST API is used update a particular user in the database "
+  )
+  @ApiResponse(
+	   responseCode = "200",
+	   description = "HTTP Status 200 SUCCESS"
+  )
   @PutMapping("{id}")
   public ResponseEntity<UserDto> updateUser(@PathVariable("id") Long userId,
        @RequestBody @Valid UserDto user) {
@@ -74,6 +121,14 @@ public class UserController {
 
   // build Delete Users REST API
   // http://localhost:8080/api/users/1
+  @Operation(
+		  summary = "Delete User By ID REST API",
+		  description = "Delete User By ID  REST API is used delete a particula user from the database "
+  )
+  @ApiResponse(
+	   responseCode = "200",
+	   description = "HTTP Status 200 SUCCESS"
+  )
   @DeleteMapping("{id}")
   public ResponseEntity<String> deleteUser(@PathVariable("id") Long userId) {
     userService.deleteUser(userId);
