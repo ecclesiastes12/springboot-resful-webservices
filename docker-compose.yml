@@ -1,0 +1,16 @@
+
+# with the latest version of docker the version can be omiited
+# version: "3"
+
+services:
+  mysqldb:
+    container_name: mysqldb
+    image: mysql
+    environment:
+      MYSQL_ROOT_PASSWORD:  root
+      MYSQL_DATABASE: employeedb
+    networks:
+      springboot-mysql-net:
+      
+networks:
+  springboot-mysql-net:
