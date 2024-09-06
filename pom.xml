@@ -141,6 +141,18 @@
                         </annotationProcessorPaths>
                     </configuration>
                 </plugin>
+                <!-- the below code will exclude all the test class from the 
+				build process for deployment -->
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-surefire-plugin</artifactId>
+					<configuration>
+						<excludes>
+							<!-- path for the all java folders in test source directory or folder-->
+							<exclude>**/*.java</exclude>
+						</excludes>
+					</configuration>
+				</plugin>
 		</plugins>
 	</build>
 

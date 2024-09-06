@@ -12,7 +12,7 @@ public interface AutoUserMapper {
 
   /*
    * Define mapping method for mapping jpa entity object to dto object and vice
-   * versa With both method in place as defined below, you don't need to write
+   * versa. With both method in place as defined below, you don't need to write
    * code
    * to implement the method. Mapstruct will automatically generated to implement
    * the method at a compilation time
